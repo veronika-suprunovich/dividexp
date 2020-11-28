@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect
-from forms import CreateTripForm, LoginForm, RegistrationForm
+from forms import CreateTripForm, LoginForm, RegistrationForm, CreateTeamMemberForm, AddNewExpenseForm
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
@@ -17,7 +17,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(50), nullable=False,
-                           default='default.jpg')
+                           default='static/assets/palm1.png')
     password = db.Column(db.String(50), nullable=False)
 
     teams = db.relationship('Team', backref='team_member', lazy=True)
@@ -56,7 +56,7 @@ class Team(db.Model):
         'Expense', backref='team_member_expense', lazy=True)
 
     def __repr__(self):
-        return f"Team member('{self.trip}', '{self.user}', '{self.budget}', '{self.credit}')"
+        return f"Team('{self.trip_id}', '{self.user_id}', '{self.budget}', '{self.credit}')"
 
 
 class Expense(db.Model):
@@ -65,7 +65,7 @@ class Expense(db.Model):
     trip_id = db.Column(db.Integer, db.ForeignKey('trip.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     team_member_id = db.Column(db.Integer, db.ForeignKey(
-        'team_member.id'), nullable=False)
+        'team.id'), nullable=False)
     # fields
     sum = db.Column(db.Float, nullable=False)
     category = db.Column(db.String(120), nullable=False)
@@ -74,7 +74,7 @@ class Expense(db.Model):
     notes = db.Column(db.String(1000), nullable=True)
 
     def __repr__(self):
-        return f"Expense('{self.trip}', '{self.user}', '{self.sum}', '{self.category}', '{self.timestamp}', '{self.notes}')"
+        return f"Expense('{self.trip_id}', '{self.user_id}', '{self.team_member_id}', '{self.sum}', '{self.category}', '{self.timestamp}', '{self.notes}')"
 
 
 trips = [{
@@ -105,14 +105,14 @@ users = [{
     'email': 'max.ersh@gmail.com',
     'balance': 324,
     'credit': 42,
-    'profile_url': 'static/assets/palm3.jpg'
+    'profile_url': 'static/assets/palm1.png'
 }, {
     'username': 'iiiiigor',
     'name': 'Igor',
     'email': 'iiiigor@gmail.com',
     'balance': 542,
     'credit': 87,
-    'profile_url': 'static/assets/palm3.jpg'
+    'profile_url': 'static/assets/palm1.png'
 }
 ]
 
@@ -163,9 +163,10 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
-@app.route("/trip")
+@app.route("/trip", methods=['GET', 'POST'])
 def main():
-    return render_template('trip.html', users=users, expenses=expenses)
+    new_team_member_form = CreateTeamMemberForm()
+    return render_template('trip.html', users=users, expenses=expenses, form=new_team_member_form)
 
 
 if __name__ == '__main__':

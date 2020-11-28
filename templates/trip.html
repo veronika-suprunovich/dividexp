@@ -82,8 +82,29 @@
         {% endfor %}
       </ul>
     </div>
-    <div class="pie-chart">
-    </div>
+  <div class="create-new-member-popup-form">
+      <h1>Add new member to your team</h1>
+      <form class="create-new-member-container" action="" method="post">
+        {{ form.hidden_tag() }}
+        <div class="user-input">
+            {{ form.name }}
+            {{ form.name.label }}
+        </div>
+        <div class="user-input">
+            {{ form.username }}
+            {{ form.username.label }}
+        </div>
+        <div class="user-input">
+            {{ form.email }}
+            {{ form.email.label }}
+        </div>
+        <div class="user-input">
+            {{ form.budget }}
+            {{ form.budget.label }}
+        </div>
+          {{ form.submit(class='red-submit-button') }}
+      </form>
+  </div>
   </div>
 </body>
 

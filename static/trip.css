@@ -341,6 +341,90 @@ li:not(:last-child) span::after {
   font-size: 16px;
 }
 
+/*                 popup forms                  */
+
+.create-new-member-popup-form {
+    width: 35%;
+    height: 250px;
+    position: absolute;
+    background-image: url('assets/add_new_member_bg.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 4px 4px rgba(62, 193, 153, 0.23);
+}
+
+.create-new-member-popup-form h1 {
+  margin: 20px;
+  font-size: 24px;
+  color: #F87575;
+  font-weight: lighter;
+}
+
+.create-new-member-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-input {
+  position: relative;
+}
+
+.user-input input {
+  margin: 20px;
+  font-family: 'Open Sans', monospace;
+  width: 215px;
+  height: 20px;
+  color: #31393C;
+  padding: 15px, 0;
+  font-size: 12px;
+  border: none;
+  border-bottom: 1px solid #31393C;
+  outline: none;
+  background: transparent;
+}
+
+.user-input label {
+  margin: 10px;
+  position: absolute;
+  top: 0;
+  left: 10px;
+  font-size: 18px;
+  font-family: 'Open Sans', monospace;
+  color: #31393C;
+  pointer-events: none;
+  transition: .5s;
+}
+
+.red-submit-button {
+  align-self: center;
+  font-weight: lighter;
+  width: 150px;
+  height: 35px;
+  text-decoration: none;
+  margin: auto;
+  outline: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #FFF;
+  background: #F87575;
+}
+
+.user-input input:focus ~ label,
+.user-input input:valid ~ label {
+  top: -20px;
+  left: 0;
+  font-size: 14px;
+}
+
+
 /*                  pie chart                   */
 
 .pie-chart {
