@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="registration-container">
+  <div class="overlay-container">
+    <div class="overlay-panel overlay-left">
+      <h1>Welcome back</h1>
+      <p>To keep connected with us please login with your personal info</p>
+      <a class="overlay-button" href="/login">Sign in</a>
+    </div>
+  </div>
+  
+  <div class="input-panel input-right">
+    <form method="POST" action="" class="input-container">
+      <h1>Create account</h1>
+      <div class="user-input">
+        {% if form.name.errors %}
+          {{ form.name }}
+          <div class="invalid-feedback">
+            {% for error in form.name.errors %}
+              <div class="span-left">
+                {{ error }}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+        {{ form.name }}
+        {% endif %}
+        {{ form.name.label }}
+      </div>
+      <div class="user-input">
+        {% if form.username.errors %}
+          {{ form.username }}
+          <div class="invalid-feedback">
+            {% for error in form.username.errors %}
+              <div class="span-left">
+                {{ error }}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+        {{ form.username }}
+        {% endif %}
+        {{ form.username.label }}
+      </div>
+      <div class="user-input">
+        {% if form.email.errors %}
+          {{ form.email }}
+          <div class="invalid-feedback">
+            {% for error in form.email.errors %}
+              <div class="span-left">
+                {{ error }}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+        {{ form.email }}
+        {% endif %}
+        {{ form.email.label }}
+      </div>
+      <div class="user-input">
+        {% if form.password.errors %}
+          {{ form.password }}
+          <div class="invalid-feedback">
+            {% for error in form.password.errors %}
+              <div class="span-left">
+                {{ error }}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+        {{ form.name }}
+        {% endif %}
+        {{ form.password.label }}
+      </div>
+      {{ form.submit(class="registration-button") }}
+    </form>
+  </div>
+</div>
+{% endblock content %}

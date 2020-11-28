@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='trip.css')}}">
+  <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Paprika&family=Poly&display=swap" rel="stylesheet">
+  <title>DivideXp - Your Trip</title>
+</head>
+
+<body>
+  <div class="trip-background">
+    <header>
+      <div class="header-container">
+        <a class="logo" href="\home">
+          <p class="divid">
+            Divid
+          </p>
+          <p class="exp">
+            e
+          </p>
+          <p class="x">
+            X
+          </p>
+          <p class="exp">
+            p
+          </p>
+        </a>
+        <div class="currency-dropper-container">
+          USD
+          <div class="currency-dropper">
+          </div>
+        </div>
+        <div class="account">
+          {{ users[0].username }}
+        </div>
+      </div>
+    </header>
+
+    <div class="team-members-container">
+      <a href="/addmember" class="add-new-member">New</a>
+      {% for team_member in users %}
+      <div class="team-member">
+        <img src={{ team_member.profile_url }} class="team-member-icon" alt="">
+        <p>{{ team_member.username }}</p>
+        <div class="team-member-info">
+          <img src={{ team_member.profile_url }} class="team-member-icon" alt="">
+          <p class="team-member-name-p">{{ team_member.name }}</p>
+          <p class="email-p">{{ team_member.email }}</p>
+          <pre class="team-member-balance-p">Balance : {{ team_member.balance}}$    Credit : {{ team_member.credit }}$</pre>
+          <div class="add-new-expense">
+            <p class="xsmall-p">Add an expense</p>
+            <div class="new-expense-image">
+              <img src="static\assets\banknotes-24.png" alt="new">
+            </div>
+          </div>
+          <progress value="57" max="100"></progress>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="timeline-container">
+      <ul>
+        {% for expense in expenses %}
+        <li>
+          <span>
+            <div class="expense-info">
+              <div class="left-panel">
+                <p class="timestamp">{{ expense.timestamp }}</p>
+              </div>
+              <div class="right-panel">
+                <p class="title">{{ expense.category }} - {{ expense.sum }}$</p>
+                <p class="account">{{ expense.name }}</p>
+              </div>
+            </div>
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="pie-chart">
+    </div>
+  </div>
+</body>
+
+</html>

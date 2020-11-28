@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="login-container">
+  <div class="overlay-container overlay-right">
+    <div class="overlay-panel">
+      <h1>Hello, Friend</h1>
+      <p>Enter your personal details and start travelling with us</p>
+      <a class="overlay-button" href="/register">Sign up</a>
+    </div>
+  </div>
+  <div class="input-panel input-left">
+    <form method="POST" action="" class="input-container">
+      <h1>Sign in</h1>
+      {{ form.hidden_tag() }}
+      <div class="user-input">
+        {% if form.username.errors %}
+        {{ form.username }}
+        <div class="invalid-feedback">
+          {% for error in form.username.errors %}
+          <div class="span-left">
+            {{ error }}
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        {{ form.username }}
+        {% endif %}
+        {{ form.username.label }}
+      </div>
+      <div class="user-input">
+        {% if form.password.errors %}
+        {{ form.password }}
+        <div class="invalid-feedback">
+          {% for error in form.password.errors %}
+          <div class="span-left">
+            {{ error }}
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        {{ form.password }}
+        {% endif %}
+        {{ form.password.label }}
+      </div>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class=flashes>
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+      {{ form.submit(class="login-button") }}
+    </form>
+  </div>
+</div>
+{% endblock content %}

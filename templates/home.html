@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="intro">
+  <header>
+    <div class="header-container">
+      <div class="currency-dropper-container">
+        USD
+        <div class="currency-dropper">
+        </div>
+      </div>
+      <a class="account" href="/login">
+        mary.gobra
+      </a>
+    </div>
+  </header>
+  <div class="trips-container">
+    {% for trip in posts %}
+    <div class="trips-container-item">
+      <p>{{ trip.destination}}</p>
+      <p class="underline-p">{{ trip.date }}</p>
+      <p>Total spendings: {{trip.total_spendings}}$</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <form method="POST" action="" class="input-form-container">
+    {{ form.hidden_tag() }}
+    <div class="input-box">
+      {% if form.source.errors %}
+      {{ form.source }}
+      <div class="invalid-feedback">
+        {% for error in form.source.errors %}
+        <div class="span-left">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      {{ form.source }}
+      {% endif %}
+      {{ form.source.label }}
+    </div>
+    <div class="input-box">
+      {% if form.destination.errors %}
+      {{ form.destination }}
+      <div class="invalid-feedback">
+        {% for error in form.destination.errors %}
+        <div class="span-left">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      {{ form.destination }}
+      {% endif %}
+      {{ form.destination.label }}
+    </div>
+    <div class="input-box">
+      {% if form.budget.errors %}
+      {{ form.budget }}
+      <div class="invalid-feedback">
+        {% for error in form.budget.errors %}
+        <div class="span-left">
+          {{ error }}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      {{ form.budget }}
+      {% endif %}
+      {{ form.budget.label }}
+    </div>
+    {{ form.submit(class="create-new-button") }}
+  </form>
+
+</div>
+{% endblock content %}
