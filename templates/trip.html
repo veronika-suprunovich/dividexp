@@ -79,7 +79,7 @@
     </div>
   <div class="create-new-member-popup-form" id="team-member-form">
       <h1>Add new member to your team</h1>
-      <form class="create-new-member-container" action="" method="post">
+      <form method="POST" class="create-new-member-container" action="">
         {{ tm_form.hidden_tag() }}
         <div class="user-input">
             {{ tm_form.name }}
@@ -97,9 +97,10 @@
             {{ tm_form.budget }}
             {{ tm_form.budget.label }}
         </div>
-          {{ tm_form.submit(class='red-submit-button', onclick="close_team_member_form()") }}
+          {{ tm_form.submit(class='red-submit-button', onclick=close_team_member_form) }}
       </form>
   </div>
+
   <div class="add-expense-popup-form" id="add-expense-form">
       <form class="add-expense-container" action="" method="post">
         {{ e_form.hidden_tag() }}
@@ -112,7 +113,7 @@
               {{ e_form.category }}
               {{ e_form.category.label }}
           </div>
-          {{ e_form.submit(class='blue-submit-button', onclick="close_expense_form()") }}
+          {{ e_form.submit(class='blue-submit-button', onclick=close_expense_form) }}
         </div>
         <div class="notes-container">
           <div class="user-input">
@@ -121,6 +122,7 @@
         </div>
       </form>
   </div>
+
   </div>
 
   <script>
@@ -135,6 +137,10 @@
 
     function open_expense_form() {
       document.getElementById("add-expense-form").style.display = "block";
+    }
+
+    function close_expense_form() {
+      document.getElementById("add-expense-form").style.display = "none";
     }
 
   </script>

@@ -168,7 +168,13 @@ def main():
     expense_form = AddNewExpenseForm()
     team_member_form = CreateTeamMemberForm()
 
-    if request.method == 'post':
+    print(request.form)
+
+    if team_member_form.validate_on_submit():
+        print(team_member_form.submit.data in request.args)
+        return redirect(url_for('home'))
+    elif expense_form.validate_on_submit():
+        print(expense_form.submit.data in request.form)
         return redirect(url_for('login'))
 
     return render_template('trip.html', users=users, expenses=expenses, tm_form=team_member_form, e_form=expense_form)
