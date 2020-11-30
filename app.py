@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, flash, redirect
+from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import CreateTripForm, LoginForm, RegistrationForm, CreateTeamMemberForm, AddNewExpenseForm
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
@@ -165,8 +165,13 @@ def login():
 
 @app.route("/trip", methods=['GET', 'POST'])
 def main():
-    new_team_member_form = CreateTeamMemberForm()
-    return render_template('trip.html', users=users, expenses=expenses, form=new_team_member_form)
+    expense_form = AddNewExpenseForm()
+    team_member_form = CreateTeamMemberForm()
+
+    if request.method == 'post':
+        return redirect(url_for('login'))
+
+    return render_template('trip.html', users=users, expenses=expenses, tm_form=team_member_form, e_form=expense_form)
 
 
 if __name__ == '__main__':

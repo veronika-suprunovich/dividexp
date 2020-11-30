@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, NumberRange, Email
 
@@ -48,5 +48,5 @@ class AddNewExpenseForm(FlaskForm):
                       DataRequired(), NumberRange(min=0, max=999999)])
     category = StringField('Category', validators=[
                             DataRequired(), Length(min=2, max=50)])
-    notes = StringField('Place for your notes..')
+    notes = TextAreaField('Place for your notes..')
     submit = SubmitField('Done')

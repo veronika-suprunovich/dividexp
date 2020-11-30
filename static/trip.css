@@ -106,30 +106,29 @@ body, html {
 }
 
 .add-new-member {
-  align-self: flex-start;
+  align-self: center;
   text-align: center;
-  width: 60px;
-  height: 50px;
-  margin: 0px;
+  margin-bottom: 30px;
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  color: #F87575;
   margin-left: auto;
   padding: 10px;
   font-size: 18px;
-  color: #F87575;
-  border-top: 2px solid #F87575;
-  border-left: 2px solid #F87575;
-  border-bottom: 2px solid #F87575;
-  box-shadow: 0px 10px 20px -6px rgba(253, 227, 255, 0.96);
   text-decoration: none;
   transition-duration: .2s;
+  cursor: pointer;
+  outline: none;
+  background: #fff;
+  border: 2px solid rgba(248, 117, 117, 0.69);
+  filter: drop-shadow(0px 2px 7px rgba(176, 116, 182, 0.2));
 }
 
 .add-new-member:hover {
-  height: 110px;
-  color: white;
-  background: rgba(248, 117, 117, 0.69);
-  border: none;
-  border-radius: 7px;
-  transition-duration: .2s;
+  background: #F87575;
+  color: #fff;
+  transition-duration: .3s;
 }
 
 .team-member {
@@ -248,14 +247,20 @@ progress[value]::-webkit-progress-value {
 }
 
 .add-new-expense {
-  display: flex;
-  flex-direction: row;
-  align-self: center;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  background: #fff;
 }
 
-.new-expense-image {
-  margin: 0 10px;
+.add-new-expense img {
+  margin-left: 10px;
+  max-width: 20px;
 }
+
+/*               Timeline               */
 
 .timeline-container {
   position: absolute;
@@ -344,6 +349,7 @@ li:not(:last-child) span::after {
 /*                 popup forms                  */
 
 .create-new-member-popup-form {
+    display: none;
     width: 35%;
     height: 250px;
     position: absolute;
@@ -422,6 +428,117 @@ li:not(:last-child) span::after {
   top: -20px;
   left: 0;
   font-size: 14px;
+}
+
+.add-expense-popup-form {
+    display: none;
+    width: 40%;
+    height: 500px;
+    position: absolute;
+    background-image: url('assets/add_expense_bg.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 4px 4px rgba(62, 193, 153, 0.23);
+}
+
+.add-expense-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.left {
+  margin: 20px;
+  margin-top: 100px;
+  width: 240px;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.left .user-input {
+  align-self: center;
+  margin: 20px;
+}
+
+.left .user-input input:focus ~ label,
+.left .user-input input:valid ~ label {
+  font-size: 14px;
+  left: -30px;
+  top: 30px;
+}
+
+.add-expense-container .user-input input {
+  text-align: center;
+  margin: 20px;
+  font-family: 'Open Sans', monospace;
+  width: 150px;
+  height: 20px;
+  color: #31393C;
+  padding: 15px, 0;
+  font-size: 14px;
+  border: none;
+  border-bottom: 1px solid #31393C;
+  outline: none;
+  background: transparent;
+}
+
+.add-expense-container .user-input label {
+  margin: 10px;
+  position: absolute;
+  width: 150px;
+  text-align: center;
+  top: 0;
+  font-size: 18px;
+  font-family: 'Open Sans', monospace;
+  color: #31393C;
+  pointer-events: none;
+  transition: .5s;
+}
+
+.notes-container {
+  align-self: center;
+  margin-top: 150px;
+  margin-right: 50px;
+  margin-left: auto;
+  max-width: 200px;
+  min-height: 250px;
+  background: #fff;
+  box-shadow: 0px 4px 4px rgba(62, 193, 153, 0.23);
+}
+
+.notes-container textarea {
+  margin: 5px;
+  font-family: 'Open Sans', monospace;
+  width: 180px;
+  height: 250px;
+  color: #31393C;
+  padding: 15px, 0;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.blue-submit-button {
+  margin: auto;
+  margin-top: 40px;
+  font-weight: lighter;
+  width: 150px;
+  height: 40px;
+  text-decoration: none;
+  outline: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #FFF;
+  background: #49B6FF;
 }
 
 
