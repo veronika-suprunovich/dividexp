@@ -8,10 +8,11 @@
       <a class="overlay-button" href="/login">Sign in</a>
     </div>
   </div>
-  
+
   <div class="input-panel input-right">
     <form method="POST" action="" class="input-container">
       <h1>Create account</h1>
+      {{ form.hidden_tag() }}
       <div class="user-input">
         {% if form.name.errors %}
           {{ form.name }}
@@ -68,7 +69,7 @@
             {% endfor %}
           </div>
         {% else %}
-        {{ form.name }}
+        {{ form.password }}
         {% endif %}
         {{ form.password.label }}
       </div>

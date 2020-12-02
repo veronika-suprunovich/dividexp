@@ -1,14 +1,19 @@
-from dividexp import db
+from dividexp import db, login_manager
 from datetime import datetime
+from flask_login import UserMixin
 
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(50), nullable=False,
-                           default='static/assets/palm1.png')
+    image_file = db.Column(db.String(50), nullable=False, default='default.png')
     password = db.Column(db.String(50), nullable=False)
 
     teams = db.relationship('Team', backref='team_member', lazy=True)
