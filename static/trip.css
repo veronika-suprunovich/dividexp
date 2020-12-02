@@ -12,6 +12,14 @@ body, html {
   color: #31393C;
 }
 
+button {
+  font-family: 'Open Sans', sans-serif;
+  color: #31393C;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
 .trip-background {
   background-image: url("assets/trip_bg.svg");
   height: 100%;
@@ -107,15 +115,14 @@ body, html {
 
 .add-new-member {
   align-self: center;
-  text-align: center;
   margin-bottom: 30px;
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 100%;
   color: #F87575;
   margin-left: auto;
-  padding: 10px;
-  font-size: 18px;
+  padding: 5px;
+  font-size: 14px;
   text-decoration: none;
   transition-duration: .2s;
   cursor: pointer;
@@ -161,6 +168,7 @@ body, html {
 }
 
 .team-member-info {
+  z-index: 99;
   position: absolute;
   display: none;
   right: 0;
@@ -169,12 +177,13 @@ body, html {
   height: 250px;
   border: 2px solid rgba(73, 182, 255, 0.29);
   color: #31393C;
-  transition-duration: .1s;
+  background: #fff;
 }
 
 .team-member:hover .team-member-info {
   display: flex;
   flex-direction: column;
+  transition-duration: .1s;
 }
 
 .team-member-info .team-member-icon {
@@ -253,6 +262,11 @@ progress[value]::-webkit-progress-value {
   border: none;
   cursor: pointer;
   background: #fff;
+  padding: 5px;
+}
+
+.add-new-expense:hover {
+  background: rgba(73, 182, 255, 0.14);
 }
 
 .add-new-expense img {
@@ -359,7 +373,8 @@ li:not(:last-child) span::after {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0px 4px 4px rgba(62, 193, 153, 0.23);
+    border: 1px solid rgba(62, 193, 153, 0.23);
+    box-shadow: 5px 5px 5px rgba(62, 193, 153, 0.43);
 }
 
 .create-new-member-popup-form h1 {
@@ -378,30 +393,30 @@ li:not(:last-child) span::after {
   justify-content: center;
 }
 
-.user-input {
+.create-new-member-container .user-input {
   position: relative;
 }
 
-.user-input input {
+.create-new-member-container .user-input input {
   margin: 20px;
   font-family: 'Open Sans', monospace;
   width: 215px;
   height: 20px;
   color: #31393C;
   padding: 15px, 0;
-  font-size: 12px;
+  font-size: 16px;
   border: none;
   border-bottom: 1px solid #31393C;
   outline: none;
   background: transparent;
 }
 
-.user-input label {
+.create-new-member-container .user-input label {
   margin: 10px;
   position: absolute;
   top: 0;
   left: 10px;
-  font-size: 18px;
+  font-size: 16px;
   font-family: 'Open Sans', monospace;
   color: #31393C;
   pointer-events: none;
@@ -423,11 +438,11 @@ li:not(:last-child) span::after {
   background: #F87575;
 }
 
-.user-input input:focus ~ label,
+.create-new-member-container .user-input input:focus ~ label,
 .user-input input:valid ~ label {
-  top: -20px;
-  left: 0;
-  font-size: 14px;
+  top: -10px;
+  left: 10px;
+  font-size: 12px;
 }
 
 .add-expense-popup-form {
@@ -441,7 +456,8 @@ li:not(:last-child) span::after {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0px 4px 4px rgba(62, 193, 153, 0.23);
+    border: 1px solid rgba(73, 182, 255, 0.34);
+    box-shadow: 5px 5px 5px rgba(73, 182, 255, 0.34);
 }
 
 .add-expense-container {
@@ -454,6 +470,7 @@ li:not(:last-child) span::after {
 }
 
 .left {
+  position: relative;
   margin: 20px;
   margin-top: 100px;
   width: 240px;
@@ -463,18 +480,12 @@ li:not(:last-child) span::after {
 }
 
 .left .user-input {
+  position: relative;
   align-self: center;
   margin: 20px;
 }
 
-.left .user-input input:focus ~ label,
-.left .user-input input:valid ~ label {
-  font-size: 14px;
-  left: -30px;
-  top: 30px;
-}
-
-.add-expense-container .user-input input {
+.left .user-input input {
   text-align: center;
   margin: 20px;
   font-family: 'Open Sans', monospace;
@@ -489,17 +500,24 @@ li:not(:last-child) span::after {
   background: transparent;
 }
 
-.add-expense-container .user-input label {
+.left .user-input label {
   margin: 10px;
   position: absolute;
   width: 150px;
   text-align: center;
   top: 0;
+  left: 10px;
   font-size: 18px;
   font-family: 'Open Sans', monospace;
-  color: #31393C;
   pointer-events: none;
   transition: .5s;
+}
+
+.left .user-input input:focus ~ label,
+.left .user-input input:valid ~ label {
+  font-size: 14px;
+  left: -30px;
+  top: 30px;
 }
 
 .notes-container {

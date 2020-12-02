@@ -11,6 +11,82 @@ body, html {
   font-family: 'Open Sans', sans-serif;
 }
 
+.header-container {
+  display: flex;
+  flex-direction: row;
+  margin: 0px;
+  font-size: 18px;
+  color: #31393C;
+  opacity: 0.82;
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-start;
+  margin: 20px;
+  text-decoration: none;
+}
+
+.logo p {
+  margin: 0;
+}
+
+.divid {
+  font-family: 'Poly', serif;
+  color: #49B6FF;
+  font-size: 36px;
+}
+
+.exp {
+  font-family: 'Paprika', cursive;
+  color: #3EC199;
+  font-size: 36px;
+  line-height: 38px;
+}
+
+.x {
+  font-family: 'Paprika', cursive;
+  color: #3EC199;
+  font-size: 50px;
+  line-height: 30px;
+}
+
+.currency-dropper-container {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-start;
+  margin-left: auto;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.currency-dropper {
+  margin-top: 8px;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 10px;
+}
+
+.currency-dropper::before {
+  content: '';
+  position: absolute;
+  display: block;
+  border-left: 3px solid #31393C;
+  border-bottom: 3px solid #31393C;
+  width: 16px;
+  height: 16px;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.account {
+  margin-top: 10px;
+  margin-right: 20px;
+  color: #31393C;
+  align-self: flex-start;
+  text-decoration: none;
+}
+
 .intro {
   background-image: url("assets/bg.svg");
   height: 100%;
