@@ -26,7 +26,7 @@ class User(db.Model, UserMixin):
 class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     route = db.Column(db.String(120), nullable=False)
-    total_spendings = db.Column(db.Float, nullable=False)
+    total_spendings = db.Column(db.Float, nullable=False, default=0.00)
     create_date = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
     last_update_date = db.Column(

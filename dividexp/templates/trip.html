@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Paprika&family=Poly&display=swap" rel="stylesheet">
-  <title>DivideXp - Your Trip</title>
+  <title>DivideXp: {{ title }}</title>
 </head>
 
 <body>
@@ -44,10 +44,10 @@
       <button class="add-new-member" onclick="open_team_member_form()">New</button>
       {% for team_member in users %}
       <div class="team-member">
-        <img src={{ team_member.profile_url }} class="team-member-icon" alt="">
+        <img src={{ url_for('static', filename= 'profile_pics/' + team_member.image_file) }} class="team-member-icon" alt="">
         <p>{{ team_member.username }}</p>
         <div class="team-member-info">
-          <img src={{ team_member.profile_url }} class="team-member-icon" alt="">
+          <img src={{ url_for('static', filename= 'profile_pics/' + team_member.image_file) }} class="team-member-icon" alt="">
           <p class="team-member-name-p">{{ team_member.name }}</p>
           <p class="email-p">{{ team_member.email }}</p>
           <pre class="team-member-balance-p">Balance : {{ team_member.balance}}$    Credit : {{ team_member.credit }}$</pre>

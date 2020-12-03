@@ -19,12 +19,12 @@
     </div>
   </header>
   <div class="trips-container">
-    {% for trip in posts %}
-    <div class="trips-container-item">
-      <p>{{ trip.destination}}</p>
-      <p class="underline-p">{{ trip.date }}</p>
+    {% for trip in trips %}
+    <a class="trips-container-item" href="{{ url_for('trip', trip_id=trip.id) }}">
+      <p>{{ trip.route}}</p>
+      <p class="underline-p">{{ trip.create_date }} - {{ trip.last_update_date }}</p>
       <p>Total spendings: {{trip.total_spendings}}$</p>
-    </div>
+    </a>
     {% endfor %}
   </div>
 
