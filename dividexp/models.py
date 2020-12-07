@@ -26,11 +26,11 @@ class User(db.Model, UserMixin):
 class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     route = db.Column(db.String(120), nullable=False)
-    total_spendings = db.Column(db.Float, nullable=False, default=0.00)
+    total_spendings = db.Column(db.Float, nullable=False, default=0.0)
     create_date = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
     last_update_date = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow)
+        db.DateTime, index=True, nullable=False, default=datetime.utcnow)
 
     team_members = db.relationship('Team', backref='team_trip', lazy=True)
     expenses = db.relationship('Expense', backref='trip', lazy=True)
@@ -46,13 +46,14 @@ class Team(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     budget = db.Column(db.Float, nullable=False)
-    credit = db.Column(db.Float, nullable=False)
+    balance = db.Column(db.Float, nullable=False)
+    credit = db.Column(db.Float, nullable=False, default=0.0)
 
     expenses = db.relationship(
         'Expense', backref='team_member_expense', lazy=True)
 
     def __repr__(self):
-        return f"Team('{self.trip_id}', '{self.user_id}', '{self.budget}', '{self.credit}')"
+        return f"Team('{self.trip_id}', '{self.user_id}', '{self.budget}', '{self.balance}', '{self.credit}')"
 
 
 class Expense(db.Model):
@@ -70,4 +71,4 @@ class Expense(db.Model):
     notes = db.Column(db.String(1000), nullable=True)
 
     def __repr__(self):
-        return f"Expense('{self.trip_id}', '{self.user_id}', '{self.team_member_id}', '{self.sum}', '{self.category}', '{self.timestamp}', '{self.notes}')"
+        return f"Expense('{self.trip_id}', '{self.user_id}', '{self.team_member_id}', '{self.sum}', '{self.category}', '{self.notes}', '{self.timestamp}')"

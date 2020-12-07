@@ -29,6 +29,39 @@ button {
   background-size: cover;
 }
 
+.notifications ul {
+  position: absolute;
+  z-index: 99;
+  bottom: 10px;
+  right: 30px;
+  list-style: none;
+}
+
+.notifications li {
+  width: 300px;
+  height: 70px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid rgba(248, 117, 117, 0.25);
+  background: #FAFAFA;
+  box-shadow: 4px 4px 4px rgba(248, 117, 117, 0.25);
+  padding: 20px;
+}
+
+.notifications button {
+  position: relative;
+  color: rgba(248, 117, 117, 0.75);
+  text-decoration: none;
+  transition-duration: .2s;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  background: transparent;
+  bottom: 25px;
+  left: 220px;
+}
+
+
 .header-container {
   display: flex;
   flex-direction: row;
@@ -276,14 +309,20 @@ progress[value]::-webkit-progress-value {
 
 /*               Timeline               */
 
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
 .timeline-container {
   position: absolute;
   top: 10%;
   width: 50%;
   height: 80%;
+  overflow: auto;
 }
 
-ul {
+.timeline-container ul {
   margin: 0;
   margin-top: 150px;
   list-style: none;
@@ -292,7 +331,7 @@ ul {
   font-size: 16px;
 }
 
-li {
+.timeline-container li {
   position: relative;
   margin-left: 30px;
   background: none;
@@ -301,13 +340,13 @@ li {
   width: 350px;
 }
 
-li:not(:first-child) {
+.timeline-container li:not(:first-child) {
   margin-top: 30px;
 }
 
 
 /* dots in timeline */
-li::before {
+.timeline-container li::before {
   content: '';
   width: 30px;
   height: 30px;
@@ -320,7 +359,7 @@ li::before {
 }
 
 /* line between dots */
-li:not(:last-child) span::after {
+.timeline-container li:not(:last-child) span::after {
   position: absolute;
   content: '';
   width: 3px;
@@ -365,7 +404,7 @@ li:not(:last-child) span::after {
 .create-new-member-popup-form {
     display: none;
     width: 35%;
-    height: 250px;
+    height: 200px;
     position: absolute;
     background-image: url('assets/add_new_member_bg.svg');
     background-position: center;
@@ -424,9 +463,9 @@ li:not(:last-child) span::after {
 }
 
 .red-submit-button {
-  align-self: center;
+  align-self: flex-end;
   font-weight: lighter;
-  width: 150px;
+  width: 130px;
   height: 35px;
   text-decoration: none;
   margin: auto;

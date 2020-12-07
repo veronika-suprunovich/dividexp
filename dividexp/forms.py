@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField, ValidationError, HiddenField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, NumberRange, Email
 from dividexp.models import User
@@ -44,17 +44,15 @@ class CreateTripForm(FlaskForm):
 
 
 class CreateTeamMemberForm(FlaskForm):
-    name = StringField('Name',
-                       validators=[DataRequired(), Length(min=2, max=50)])
     username = StringField('Username',
                            validators=[DataRequired(), Length(min=2, max=50)])
-    email = EmailField('Email', validators=[DataRequired(), Email()])
     budget = IntegerField('Budget', validators=[
                          DataRequired(), NumberRange(min=0, max=999999)])
     submit = SubmitField('Submit')
 
 
 class AddNewExpenseForm(FlaskForm):
+    username = HiddenField()
     sum = FloatField('Enter sum', validators=[
                       DataRequired(), NumberRange(min=0, max=999999)])
     category = StringField('Category', validators=[

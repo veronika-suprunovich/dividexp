@@ -12,6 +12,20 @@
 </head>
 
 <body>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="notifications" id="notify">
+      <ul>
+        {% for message in messages %}
+          <li> {{message}} </li>
+          <button onclick="hide_notifications()">DISMISS |</button>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  {% endwith %}
+
   <div class="trip-background">
     <header>
       <div class="header-container">
@@ -41,7 +55,7 @@
     </header>
 
     <div class="team-members-container">
-      <button class="add-new-member" onclick="open_team_member_form()">New</button>
+      <button class="add-new-member" onclick="open_team_member_form()" id="open-team-member-form-button">New</button>
       {% for team_member in users %}
       <div class="team-member">
         <img src={{ url_for('static', filename= 'profile_pics/' + team_member.image_file) }} class="team-member-icon" alt="">
@@ -50,9 +64,9 @@
           <img src={{ url_for('static', filename= 'profile_pics/' + team_member.image_file) }} class="team-member-icon" alt="">
           <p class="team-member-name-p">{{ team_member.name }}</p>
           <p class="email-p">{{ team_member.email }}</p>
-          <pre class="team-member-balance-p">Balance : {{ team_member.balance}}$    Credit : {{ team_member.credit }}$</pre>
-          <button class="add-new-expense" onclick="open_expense_form()">Add an expense<img src="static\assets\banknotes-512.png" alt=""></button>
-          <progress value="57" max="100"></progress>
+          <pre class="team-member-balance-p">Balance : {{ team_member.budget }}$    Credit : {{ team_member.credit }}$</pre>
+          <button name={{ team_member.username }} class="add-new-expense" onclick="open_expense_form()">Add an expense<img src="static\assets\banknotes-512.png" alt=""></button>
+          <progress value={{ team_member.progress_bar_value }} max="100"></progress>
         </div>
       </div>
       {% endfor %}
@@ -79,19 +93,11 @@
     </div>
   <div class="create-new-member-popup-form" id="team-member-form">
       <h1>Add new member to your team</h1>
-      <form method="POST" class="create-new-member-container" action="">
+      <form method="post" class="create-new-member-container" action="">
         {{ tm_form.hidden_tag() }}
-        <div class="user-input">
-            {{ tm_form.name }}
-            {{ tm_form.name.label }}
-        </div>
         <div class="user-input">
             {{ tm_form.username }}
             {{ tm_form.username.label }}
-        </div>
-        <div class="user-input">
-            {{ tm_form.email }}
-            {{ tm_form.email.label }}
         </div>
         <div class="user-input">
             {{ tm_form.budget }}
@@ -101,8 +107,8 @@
       </form>
   </div>
 
-  <div class="add-expense-popup-form" id="add-expense-form">
-      <form class="add-expense-container" action="" method="post">
+  <div class="add-expense-popup-form" id="add-expense-form" name="form">
+      <form class="add-expense-container" action="" method="post", name="expense_form">
         {{ e_form.hidden_tag() }}
         <div class="left">
           <div class="user-input">
@@ -136,12 +142,20 @@
     }
 
     function open_expense_form() {
+      var buttonName = event.target.name;
+      formObject = document.forms["expense_form"];
+      formObject.elements["username"].value = buttonName;
       document.getElementById("add-expense-form").style.display = "block";
     }
 
     function close_expense_form() {
       document.getElementById("add-expense-form").style.display = "none";
     }
+
+    function hide_notifications() {
+      document.getElementById("notify").style.display = "none";
+    }
+
 
   </script>
 

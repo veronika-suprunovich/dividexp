@@ -1,50 +1,11 @@
 from flask import render_template, url_for, flash, redirect, request
 from dividexp import app, db, bcrypt
 from dividexp.forms import CreateTripForm, LoginForm, RegistrationForm, CreateTeamMemberForm, AddNewExpenseForm
-from dividexp.models import User, Trip, Team, Expense
+from dividexp.models import User, Trip, Team
 from flask_login import login_user, logout_user, current_user, login_required
+from dividexp.manager import TripManager
 
-
-# users = [{
-#     'username': 'mary.gobra',
-#     'name': 'Mary Gobra',
-#     'email': 'mary.gobra@gmail.com',
-#     'balance': 512,
-#     'credit': 12,
-#     'profile_url': 'static/assets/palm3.jpg'
-# }, {
-#     'username': 'max.ersh',
-#     'name': 'Max',
-#     'email': 'max.ersh@gmail.com',
-#     'balance': 324,
-#     'credit': 42,
-#     'profile_url': 'static/assets/palm3.jpg'
-# }, {
-#     'username': 'iiiiigor',
-#     'name': 'Igor',
-#     'email': 'iiiigor@gmail.com',
-#     'balance': 542,
-#     'credit': 87,
-#     'profile_url': 'static/assets/palm3.jpg'
-# }
-# ]
-#
-# expenses = [{
-#     'category': 'Apartments',
-#     'sum': 134,
-#     'name': 'Mary',
-#     'timestamp': '1h ago'
-# }, {
-#     'category': 'Car',
-#     'sum': 335,
-#     'name': 'Igor',
-#     'timestamp': '2h ago'
-# }, {
-#     'category': 'Food',
-#     'sum': 87,
-#     'name': 'Mary',
-#     'timestamp': '9:50 am'
-# }]
+expense_table = TripManager()
 
 
 def collect_trips(id):
@@ -66,31 +27,10 @@ def collect_trips(id):
     return reversed(trips)
 
 
-def collect_users(trip_id):
-    users = []
-
-    # get team members of the trip
-    trip = Trip.query.get(trip_id)
-    team_members = trip.team_members
-
-    for each_member in team_members:
-        user = User.query.filter_by(id=each_member.user_id).first()
-        users.append({
-            'id': each_member.id,
-            'username': user.username,
-            'name': user.name,
-            'email': user.email,
-            'image_file': user.image_file,
-            'budget': each_member.budget,
-            'credit': each_member.credit
-        })
-
-    return reversed(users)
-
-
 @app.route("/", methods=['GET', 'POST'])     # homepage
 @app.route("/home", methods=['GET', 'POST'])
 def home():
+    trips = []
     if current_user.is_authenticated:
         trips = collect_trips(current_user.id)
     form = CreateTripForm()
@@ -98,10 +38,12 @@ def home():
         new_trip = Trip(route=form.source.data + ' - ' + form.destination.data)
         db.session.add(new_trip)
         db.session.commit()
-        team_member = Team(trip_id=new_trip.id, user_id=current_user.id, budget=form.budget.data, credit=0.00)
+        print(form.budget.data)
+        team_member = Team(trip_id=new_trip.id, user_id=current_user.id,
+                           budget=form.budget.data, balance=form.budget.data)
         db.session.add(team_member)
         db.session.commit()
-        return redirect(url_for('trip'))
+        return redirect(url_for('trip', trip_id=new_trip.id))
     return render_template('home.html', trips=trips, title='Create new trip', form=form)
 
 
@@ -109,8 +51,10 @@ def home():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(name=form.name.data, username=form.username.data, email=form.email.data, password=hashed_password)
+        hashed_password = bcrypt.generate_password_hash(
+            form.password.data).decode('utf-8')
+        user = User(name=form.name.data, username=form.username.data,
+                    email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('login'))
@@ -137,18 +81,29 @@ def trip(trip_id):
 
     trip = Trip.query.get_or_404(trip_id)
 
+    if (expense_table.id != trip.id):
+        expense_table.set_id(trip_id)
+        expense_table.fill_table(trip.team_members, trip.expenses)
+        expense_table.collect_users()
+        expense_table.collect_expenses()
+
     expense_form = AddNewExpenseForm()
     team_member_form = CreateTeamMemberForm()
 
-    users = collect_users(trip_id=trip.id)
-    expenses = trip.expenses
-
     if team_member_form.validate_on_submit():
-        return redirect(url_for('trip', trip_id=trip.id))
+        # check whether the user is already in the team
+        existing = User.query.join(User.teams).filter(
+            User.username == team_member_form.username.data, Team.trip_id == trip.id).first()
+        if(existing is None):
+            if expense_table.add_team_member(team_member_form.username.data, team_member_form.budget.data) is False:
+                flash("""Couldn't find DivideXp account""")
+        else:
+            flash('The user is already in your team')
     elif expense_form.validate_on_submit():
-        return redirect(url_for('trip', trip_id=trip.id))
+        expense_table.add_expense(
+            expense_form.username.data, expense_form.category.data, expense_form.sum.data, expense_form.notes.data)
 
-    return render_template('trip.html', title=trip.route, users=users, expenses=expenses, tm_form=team_member_form, e_form=expense_form)
+    return render_template('trip.html', title=trip.route, users=reversed(expense_table.team), expenses=reversed(expense_table.expenses), tm_form=team_member_form, e_form=expense_form)
 
 
 @app.route("/logout")

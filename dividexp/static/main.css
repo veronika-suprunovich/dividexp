@@ -141,6 +141,11 @@ text-decoration: none;
   transition: color .2s linear;
 }
 
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
 .trips-container {
   display: flex;
   width: 40%;
@@ -148,6 +153,7 @@ text-decoration: none;
   flex-direction: column;
   align-self: center;
   margin: 20px;
+  overflow: auto;
 }
 
 .trips-container-item {
