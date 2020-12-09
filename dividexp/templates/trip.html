@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Paprika&family=Poly&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
   <title>DivideXp: {{ title }}</title>
 </head>
 
@@ -15,14 +16,14 @@
 
   {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <div class="notifications" id="notify">
-      <ul>
-        {% for message in messages %}
-          <li> {{message}} </li>
-          <button onclick="hide_notifications()">DISMISS |</button>
-        {% endfor %}
-      </ul>
-    </div>
+  <div class="notifications" id="notify">
+    <ul>
+      {% for message in messages %}
+      <li> {{message}} </li>
+      <button onclick="hide_notifications()">DISMISS |</button>
+      {% endfor %}
+    </ul>
+  </div>
   {% endif %}
   {% endwith %}
 
@@ -67,6 +68,11 @@
           <pre class="team-member-balance-p">Balance : {{ team_member.budget }}$    Credit : {{ team_member.credit }}$</pre>
           <button name={{ team_member.username }} class="add-new-expense" onclick="open_expense_form()">Add an expense<img src="static\assets\banknotes-512.png" alt=""></button>
           <progress value={{ team_member.progress_bar_value }} max="100"></progress>
+          <div class="credits">
+            {% for credit in team_member['credits'] %}
+              <p class="credits-info"> {{ credit }} : {{ team_member['credits'][credit] }} $</p>
+            {% endfor %}
+        </div>
         </div>
       </div>
       {% endfor %}
@@ -91,48 +97,54 @@
         {% endfor %}
       </ul>
     </div>
-  <div class="create-new-member-popup-form" id="team-member-form">
+
+
+    <canvas id="pie-chart">
+    </canvas>
+
+    <div class="create-new-member-popup-form" id="team-member-form">
       <h1>Add new member to your team</h1>
+      <button class="close-form-btn" onclick="close_team_member_form()">Close</button>
       <form method="post" class="create-new-member-container" action="">
         {{ tm_form.hidden_tag() }}
         <div class="user-input">
-            {{ tm_form.username }}
-            {{ tm_form.username.label }}
+          {{ tm_form.username }}
+          {{ tm_form.username.label }}
         </div>
         <div class="user-input">
-            {{ tm_form.budget }}
-            {{ tm_form.budget.label }}
+          {{ tm_form.budget }}
+          {{ tm_form.budget.label }}
         </div>
-          {{ tm_form.submit(class='red-submit-button', onclick=close_team_member_form) }}
+        {{ tm_form.submit(class='red-submit-button', onclick=close_team_member_form) }}
       </form>
-  </div>
+    </div>
 
-  <div class="add-expense-popup-form" id="add-expense-form" name="form">
-      <form class="add-expense-container" action="" method="post", name="expense_form">
+    <div class="add-expense-popup-form" id="add-expense-form" name="form">
+      <button onclick="close_expense_form()">Close</button>
+      <form class="add-expense-container" method="post" name="expense_form">
         {{ e_form.hidden_tag() }}
         <div class="left">
           <div class="user-input">
-              {{ e_form.sum }}
-              {{ e_form.sum.label }}
+            {{ e_form.sum }}
+            {{ e_form.sum.label }}
           </div>
           <div class="user-input">
-              {{ e_form.category }}
-              {{ e_form.category.label }}
+            {{ e_form.category }}
+            {{ e_form.category.label }}
           </div>
-          {{ e_form.submit(class='blue-submit-button', onclick=close_expense_form) }}
+          {{ e_form.submit(class='blue-submit-button') }}
         </div>
         <div class="notes-container">
           <div class="user-input">
-              {{ e_form.notes(placeholder='Place for your notes..') }}
+            {{ e_form.notes(placeholder='Place for your notes..') }}
           </div>
         </div>
       </form>
-  </div>
+    </div>
 
   </div>
 
   <script>
-
     function open_team_member_form() {
       document.getElementById("team-member-form").style.display = "block";
     }
@@ -156,7 +168,54 @@
       document.getElementById("notify").style.display = "none";
     }
 
+    data = {
 
+      datasets: [{
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'rgb(73, 182, 255)',
+        borderWidth: 3,
+        hoverBackgroundColor: 'rgba(73, 182, 255, 0.25)',
+        hoverBorderWidth: 5,
+        data: [
+          {% for item in values %}
+          "{{ item }}",
+          {% endfor %}
+        ]
+      }],
+
+      labels: [
+        {% for item in labels %}
+        "{{ item }}",
+        {% endfor %}
+      ],
+    }
+
+    window.onload = function() {
+      var ctx = document.getElementById('pie-chart').getContext('2d');
+      var myPolarArea = new Chart(ctx, {
+        data: data,
+        type: 'polarArea',
+        options: {
+          legend: {
+            display: false
+          },
+          tooltips: {
+            backgroundColor: '#fff',
+            callbacks: {
+                labelColor: function(tooltipItem, chart) {
+                    return {
+                        borderColor: '#fff',
+                        backgroundColor: '#fff'
+                    };
+                },
+                labelTextColor: function(tooltipItem, chart) {
+                    return '#31393C';
+                }
+            }
+          }
+        }
+      });
+    };
   </script>
 
 </body>

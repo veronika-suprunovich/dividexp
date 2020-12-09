@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField, ValidationError, HiddenField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField, ValidationError, HiddenField, SelectField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, NumberRange, Email
 from dividexp.models import User

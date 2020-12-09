@@ -2,6 +2,7 @@ from numpy import zeros
 from dividexp import db
 from dividexp.models import User, Team, Trip, Expense
 from math import fabs
+from datetime import datetime
 
 
 class TripManager:
@@ -14,6 +15,18 @@ class TripManager:
 
     def set_id(self, trip_id):
         self.id = trip_id
+
+    def clear(self):
+        self.id = 0
+        self.keys = {}
+        self.size = 1
+        self.expenses = []
+        self.team = []
+
+    def update_trip_date(self):
+        trip = Trip.query.get(self.id)
+        trip.last_update_date = datetime.utcnow()
+        db.session.commit()
 
     def enumerate_members(self, team):
         for member in team:
@@ -64,6 +77,7 @@ class TripManager:
                 credit = credit + self.expense_table[row, col]
 
         user.credit = credit
+        self.update_trip_date()
         db.session.commit()
 
     def recount_all_users_budget(self):
@@ -73,6 +87,17 @@ class TripManager:
 
         self.collect_users()
 
+    def get_credits_info(self, column):
+        credits_info = {}
+        users_list = list(self.keys.keys())
+
+        for row in range(0, self.size):
+            user = User.query.filter_by(id=users_list[row]).first()
+            if(row == column):
+                continue
+            credits_info[user.username] = round(self.expense_table[row, column], 2)
+        return credits_info
+
     def collect_users(self):
         self.team.clear()
         # get team members of the trip
@@ -81,6 +106,7 @@ class TripManager:
         for each_member in team_members:
             user = User.query.filter_by(id=each_member.user_id).first()
             self.recount_user_budget(each_member.id, self.keys.get(user.id))
+            credit_info = self.get_credits_info(self.keys.get(user.id))
             self.team.append({
                 'id': each_member.id,
                 'username': user.username,
@@ -89,7 +115,8 @@ class TripManager:
                 'image_file': user.image_file,
                 'budget': round(each_member.balance, 2),
                 'credit': round(each_member.credit, 2),
-                'progress_bar_value': int(100.0 * each_member.balance / each_member.budget)
+                'progress_bar_value': int(100.0 * each_member.balance / each_member.budget),
+                'credits': credit_info
             })
 
     def collect_expenses(self):
@@ -116,6 +143,7 @@ class TripManager:
         db.session.add(expense)
         trip = Trip.query.get(self.id)
         trip.total_spendings = trip.total_spendings + expense.sum
+        self.update_trip_date()
         db.session.commit()
         new_expense = {
             'category': expense.category,
@@ -136,6 +164,7 @@ class TripManager:
             team_member = Team(trip_id=self.id, user_id=user.id,
                                budget=budget, balance=budget)
             db.session.add(team_member)
+            self.update_trip_date()
             db.session.commit()
 
             new_user = {
@@ -152,3 +181,16 @@ class TripManager:
             return True
         else:
             return False
+
+    def get_chart_items(self):
+        expenses_chart = {}
+        for expense in self.expenses:
+            if expense['category'] in expenses_chart.keys():
+                current_value = expenses_chart.get(expense['category'])
+                expenses_chart[expense['category']] = current_value + expense['sum']
+            else:
+                expenses_chart[expense['category']] = expense['sum']
+        if len(expenses_chart) == 0:
+            return [], []
+        else:
+            return zip(*expenses_chart.items())

@@ -35,15 +35,18 @@ def home():
         trips = collect_trips(current_user.id)
     form = CreateTripForm()
     if form.validate_on_submit():
-        new_trip = Trip(route=form.source.data + ' - ' + form.destination.data)
-        db.session.add(new_trip)
-        db.session.commit()
-        print(form.budget.data)
-        team_member = Team(trip_id=new_trip.id, user_id=current_user.id,
-                           budget=form.budget.data, balance=form.budget.data)
-        db.session.add(team_member)
-        db.session.commit()
-        return redirect(url_for('trip', trip_id=new_trip.id))
+        if current_user.is_authenticated:
+            new_trip = Trip(route=form.source.data + ' - ' + form.destination.data)
+            db.session.add(new_trip)
+            db.session.commit()
+            print(form.budget.data)
+            team_member = Team(trip_id=new_trip.id, user_id=current_user.id,
+                               budget=form.budget.data, balance=form.budget.data)
+            db.session.add(team_member)
+            db.session.commit()
+            return redirect(url_for('trip', trip_id=new_trip.id))
+        else:
+            return redirect(url_for('login'))
     return render_template('home.html', trips=trips, title='Create new trip', form=form)
 
 
@@ -82,10 +85,12 @@ def trip(trip_id):
     trip = Trip.query.get_or_404(trip_id)
 
     if (expense_table.id != trip.id):
+        print('Reinit expense table')
+        expense_table.clear()
         expense_table.set_id(trip_id)
         expense_table.fill_table(trip.team_members, trip.expenses)
-        expense_table.collect_users()
         expense_table.collect_expenses()
+        expense_table.collect_users()
 
     expense_form = AddNewExpenseForm()
     team_member_form = CreateTeamMemberForm()
@@ -99,11 +104,15 @@ def trip(trip_id):
                 flash("""Couldn't find DivideXp account""")
         else:
             flash('The user is already in your team')
+        return redirect(url_for('trip', trip_id=trip.id))
     elif expense_form.validate_on_submit():
         expense_table.add_expense(
             expense_form.username.data, expense_form.category.data, expense_form.sum.data, expense_form.notes.data)
+        return redirect(url_for('trip', trip_id=trip.id))
 
-    return render_template('trip.html', title=trip.route, users=reversed(expense_table.team), expenses=reversed(expense_table.expenses), tm_form=team_member_form, e_form=expense_form)
+    labels, values = expense_table.get_chart_items()
+
+    return render_template('trip.html', title=trip.route, users=reversed(expense_table.team), expenses=reversed(expense_table.expenses), tm_form=team_member_form, e_form=expense_form, values=values, labels=labels)
 
 
 @app.route("/logout")
