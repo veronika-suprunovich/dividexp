@@ -43,4 +43,4 @@ JavaScript-библиотека Chart.js позволяет генерирова
 ### 3. Структура БД <a name="3"></a>
 В проекте используется реляционная легковесная база данных SQLite-3. Для взаимодействия с БД используется встроенный модуль sqlalchemy. В базе данных будет хранится информация о пользователях, поездках и расходах.
 
-![img](img\ERD.PNG)
+![img](https://github.com/veronika-suprunovich/dividexp/blob/main/docs/img/ERD.PNG)
