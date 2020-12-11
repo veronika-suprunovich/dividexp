@@ -82,10 +82,9 @@ class TripManager:
 
     def recount_all_users_budget(self):
 
+        self.collect_users()
         for user in self.keys:
             self.recount_user_budget(user, self.keys.get(user))
-
-        self.collect_users()
 
     def get_credits_info(self, column):
         credits_info = {}
@@ -184,6 +183,7 @@ class TripManager:
 
     def get_chart_items(self):
         expenses_chart = {}
+        print(self.expenses)
         for expense in self.expenses:
             if expense['category'] in expenses_chart.keys():
                 current_value = expenses_chart.get(expense['category'])
