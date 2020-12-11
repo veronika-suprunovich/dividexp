@@ -8,7 +8,7 @@ from datetime import datetime
 class TripManager:
     def __init__(self):
         self.id = 0
-        self.keys = {}
+        self.users_ids = {}
         self.size = 1
         self.expenses = []
         self.team = []
@@ -18,7 +18,7 @@ class TripManager:
 
     def clear(self):
         self.id = 0
-        self.keys = {}
+        self.users_ids = {}
         self.size = 1
         self.expenses = []
         self.team = []
@@ -28,14 +28,32 @@ class TripManager:
         trip.last_update_date = datetime.utcnow()
         db.session.commit()
 
+    def collect_trips(self, user_id):
+        trips = []
+        # get list of user's teams
+        teams = Team.query.filter_by(user_id=user_id).all()
+
+        for each_team in teams:
+            # get trip of each team
+            trip = Trip.query.filter_by(id=each_team.trip_id).first()
+            trips.append({
+                'id': trip.id,
+                'route': trip.route,
+                'create_date': trip.create_date.strftime('%d/%m/%Y'),
+                'last_update_date': trip.last_update_date.strftime('%d/%m/%Y'),
+                'total_spendings': trip.total_spendings
+            })
+
+        return trips
+
     def enumerate_members(self, team):
         for member in team:
             print(member.user_id)
-            if member.user_id in self.keys:
+            if member.user_id in self.users_ids:
                 continue
-            self.keys[member.user_id] = len(self.keys)
+            self.users_ids[member.user_id] = len(self.users_ids)
 
-        print(self.keys)
+        print(self.users_ids)
 
     def edit_expense_table(self, row, sum):
         credit = sum / self.size
@@ -63,7 +81,7 @@ class TripManager:
 
         for e in expenses:
             # get row num
-            row = self.keys.get(e.user_id)
+            row = self.users_ids.get(e.user_id)
             self.edit_expense_table(row, e.sum)
 
     def recount_user_budget(self, user_id, col):
@@ -83,12 +101,12 @@ class TripManager:
     def recount_all_users_budget(self):
 
         self.collect_users()
-        for user in self.keys:
-            self.recount_user_budget(user, self.keys.get(user))
+        for user in self.users_ids:
+            self.recount_user_budget(user, self.users_ids.get(user))
 
     def get_credits_info(self, column):
         credits_info = {}
-        users_list = list(self.keys.keys())
+        users_list = list(self.users_ids.keys())
 
         for row in range(0, self.size):
             user = User.query.filter_by(id=users_list[row]).first()
@@ -104,8 +122,8 @@ class TripManager:
         team_members = trip.team_members
         for each_member in team_members:
             user = User.query.filter_by(id=each_member.user_id).first()
-            self.recount_user_budget(each_member.id, self.keys.get(user.id))
-            credit_info = self.get_credits_info(self.keys.get(user.id))
+            self.recount_user_budget(each_member.id, self.users_ids.get(user.id))
+            credit_info = self.get_credits_info(self.users_ids.get(user.id))
             self.team.append({
                 'id': each_member.id,
                 'username': user.username,
@@ -152,7 +170,7 @@ class TripManager:
         }
         self.expenses.append(new_expense)
 
-        self.edit_expense_table(self.keys.get(user.id), sum)
+        self.edit_expense_table(self.users_ids.get(user.id), sum)
         self.recount_all_users_budget()
 
     def add_team_member(self, username, budget):

@@ -1,30 +1,8 @@
 from flask import render_template, url_for, flash, redirect, request
-from dividexp import app, db, bcrypt
+from dividexp import app, db, bcrypt, manage
 from dividexp.forms import CreateTripForm, LoginForm, RegistrationForm, CreateTeamMemberForm, AddNewExpenseForm
 from dividexp.models import User, Trip, Team
 from flask_login import login_user, logout_user, current_user, login_required
-from dividexp.manager import TripManager
-
-expense_table = TripManager()
-
-
-def collect_trips(id):
-    trips = []
-    # get list of user's teams
-    teams = Team.query.filter_by(user_id=id).all()
-
-    for each_team in teams:
-        # get trip of each team
-        trip = Trip.query.filter_by(id=each_team.trip_id).first()
-        trips.append({
-            'id': trip.id,
-            'route': trip.route,
-            'create_date': trip.create_date.strftime('%d/%m/%Y'),
-            'last_update_date': trip.last_update_date.strftime('%d/%m/%Y'),
-            'total_spendings': trip.total_spendings
-        })
-
-    return reversed(trips)
 
 
 @app.route("/", methods=['GET', 'POST'])     # homepage
@@ -32,7 +10,7 @@ def collect_trips(id):
 def home():
     trips = []
     if current_user.is_authenticated:
-        trips = collect_trips(current_user.id)
+        trips = manage.collect_trips(current_user.id)
     form = CreateTripForm()
     if form.validate_on_submit():
         if current_user.is_authenticated:
@@ -47,7 +25,7 @@ def home():
             return redirect(url_for('trip', trip_id=new_trip.id))
         else:
             return redirect(url_for('login'))
-    return render_template('home.html', trips=trips, title='Create new trip', form=form)
+    return render_template('home.html', trips=reversed(trips), title='Create new trip', form=form)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -84,13 +62,12 @@ def trip(trip_id):
 
     trip = Trip.query.get_or_404(trip_id)
 
-    if (expense_table.id != trip.id):
-        print('Reinit expense table')
-        expense_table.clear()
-        expense_table.set_id(trip_id)
-        expense_table.fill_table(trip.team_members, trip.expenses)
-        expense_table.collect_expenses()
-        expense_table.collect_users()
+    if (manage.id != trip.id):
+        manage.clear()
+        manage.set_id(trip_id)
+        manage.fill_table(trip.team_members, trip.expenses)
+        manage.collect_expenses()
+        manage.collect_users()
 
     expense_form = AddNewExpenseForm()
     team_member_form = CreateTeamMemberForm()
@@ -100,19 +77,22 @@ def trip(trip_id):
         existing = User.query.join(User.teams).filter(
             User.username == team_member_form.username.data, Team.trip_id == trip.id).first()
         if(existing is None):
-            if expense_table.add_team_member(team_member_form.username.data, team_member_form.budget.data) is False:
+            if manage.add_team_member(team_member_form.username.data, team_member_form.budget.data) is False:
                 flash("""Couldn't find DivideXp account""")
+            else:
+                manage.fill_table(trip.team_members, trip.expenses)
+                manage.collect_users()
         else:
             flash('The user is already in your team')
         return redirect(url_for('trip', trip_id=trip.id))
     elif expense_form.validate_on_submit():
-        expense_table.add_expense(
+        manage.add_expense(
             expense_form.username.data, expense_form.category.data, expense_form.sum.data, expense_form.notes.data)
         return redirect(url_for('trip', trip_id=trip.id))
 
-    labels, values = expense_table.get_chart_items()
+    labels, values = manage.get_chart_items()
 
-    return render_template('trip.html', title=trip.route, users=reversed(expense_table.team), expenses=reversed(expense_table.expenses), tm_form=team_member_form, e_form=expense_form, values=values, labels=labels)
+    return render_template('trip.html', title=trip.route, users=reversed(manage.team), expenses=reversed(manage.expenses), tm_form=team_member_form, e_form=expense_form, values=values, labels=labels)
 
 
 @app.route("/logout")
