@@ -74,7 +74,7 @@ JavaScript-библиотека Chart.js позволяет генерирова
 
 Форма для создание поездки, должно быть поля для ввода бюджета участника.
 
-![img](https://github.com/veronika-suprunovich/dividexp/blob/main/docs/img/home_screen.PNG)
+![img](https://github.com/veronika-suprunovich/dividexp/blob/main/docs/img/home_screen.png)
 
 #### Добавление нового участника
 
@@ -92,7 +92,7 @@ JavaScript-библиотека Chart.js позволяет генерирова
 
 Будет подсчитана общая сумма потраченного на каждую из категорий. Это будет отображено на полярной диаграмме.
 
-![img](https://github.com/veronika-suprunovich/dividexp/blob/main/docs/img/trip.PNG)
+![img](https://github.com/veronika-suprunovich/dividexp/blob/main/docs/img/trip.png)
 
 #### Расчет долга
 
