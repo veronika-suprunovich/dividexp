@@ -14,7 +14,8 @@ def home():
     form = CreateTripForm()
     if form.validate_on_submit():
         if current_user.is_authenticated:
-            new_trip = Trip(route=form.source.data + ' - ' + form.destination.data)
+            new_trip = Trip(route=form.source.data +
+                            ' - ' + form.destination.data)
             db.session.add(new_trip)
             db.session.commit()
             print(form.budget.data)
@@ -69,7 +70,7 @@ def trip(trip_id):
         manage.collect_expenses()
         manage.collect_users()
 
-    expense_form = AddNewExpenseForm()
+    expense_form = AddNewExpenseForm(split=True)
     team_member_form = CreateTeamMemberForm()
 
     if team_member_form.validate_on_submit():
@@ -86,8 +87,10 @@ def trip(trip_id):
             flash('The user is already in your team')
         return redirect(url_for('trip', trip_id=trip.id))
     elif expense_form.validate_on_submit():
-        manage.add_expense(
-            expense_form.username.data, expense_form.category.data, expense_form.sum.data, expense_form.notes.data)
+        if expense_form.split.data is True:
+            manage.add_joint_expense(expense_form.username.data, expense_form.category.data, expense_form.sum.data, expense_form.notes.data)
+        else:
+            manage.add_expense(expense_form.username.data, expense_form.category.data, expense_form.sum.data, expense_form.notes.data)
         return redirect(url_for('trip', trip_id=trip.id))
 
     labels, values = manage.get_chart_items()

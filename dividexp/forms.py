@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField, ValidationError, HiddenField, SelectField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField, ValidationError, HiddenField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, NumberRange, Email
 from dividexp.models import User
@@ -58,4 +58,5 @@ class AddNewExpenseForm(FlaskForm):
     category = StringField('Category', validators=[
                             DataRequired(), Length(min=2, max=50)])
     notes = TextAreaField('Place for your notes..')
+    split = BooleanField('Split between all friends')
     submit = SubmitField('Done')

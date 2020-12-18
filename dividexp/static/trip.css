@@ -648,6 +648,17 @@ progress[value]::-webkit-progress-value {
   background: #49B6FF;
 }
 
+.checkbox {
+  font-size: 10px;
+  margin-left: 50px;
+}
+
+.checkmark {
+  color: red;
+  background: pink;
+}
+
+
 /*                  pie chart                   */
 canvas {
   position: absolute;

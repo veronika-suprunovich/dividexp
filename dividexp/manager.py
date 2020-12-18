@@ -98,12 +98,6 @@ class TripManager:
         self.update_trip_date()
         db.session.commit()
 
-    def recount_all_users_budget(self):
-
-        self.collect_users()
-        for user in self.users_ids:
-            self.recount_user_budget(user, self.users_ids.get(user))
-
     def get_credits_info(self, column):
         credits_info = {}
         users_list = list(self.users_ids.keys())
@@ -150,7 +144,7 @@ class TripManager:
                 'timestamp': each_expense.timestamp.strftime('%I:%M %p'),
             })
 
-    def add_expense(self, username, category, sum, notes):
+    def add_joint_expense(self, username, category, sum, notes):
         # commit changes to the database
         user = User.query.filter_by(username=username).first()
         team_member = User.query.join(User.teams).filter(
@@ -171,7 +165,33 @@ class TripManager:
         self.expenses.append(new_expense)
 
         self.edit_expense_table(self.users_ids.get(user.id), sum)
-        self.recount_all_users_budget()
+        self.collect_users()
+
+    def add_expense(self, username, category, sum, notes):
+        # commit changes to the database
+        user = User.query.filter_by(username=username).first()
+        team_member = User.query.join(User.teams).filter(
+            User.username == username, Team.trip_id == self.id).first()
+        expense = Expense(trip_id=self.id, user_id=user.id, team_member_id=team_member.id,
+                          sum=sum, category=category, notes=notes)
+        db.session.add(expense)
+        trip = Trip.query.get(self.id)
+        trip.total_spendings = trip.total_spendings + expense.sum
+        self.update_trip_date()
+        db.session.commit()
+        new_expense = {
+            'category': expense.category,
+            'sum': expense.sum,
+            'name': user.name,
+            'timestamp': expense.timestamp.strftime('%I:%M %p'),
+        }
+        self.expenses.append(new_expense)
+
+        # get user column, row in expense table
+        row = self.users_ids.get(user.id)
+        self.expense_table[row][row] = self.expense_table[row][row] + sum
+
+        self.collect_users()
 
     def add_team_member(self, username, budget):
 
