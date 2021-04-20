@@ -1,6 +1,6 @@
 from numpy import zeros
 from dividexp import db
-from dividexp.models import User, Team, Trip, Expense
+from dividexp.models import Users, Teams, Trips, Expenses
 from math import fabs
 from datetime import datetime
 
@@ -24,18 +24,18 @@ class TripManager:
         self.team = []
 
     def update_trip_date(self):
-        trip = Trip.query.get(self.id)
+        trip = Trips.query.get(self.id)
         trip.last_update_date = datetime.utcnow()
         db.session.commit()
 
     def collect_trips(self, user_id):
         trips = []
         # get list of user's teams
-        teams = Team.query.filter_by(user_id=user_id).all()
+        teams = Teams.query.filter_by(user_id=user_id).all()
 
         for each_team in teams:
             # get trip of each team
-            trip = Trip.query.filter_by(id=each_team.trip_id).first()
+            trip = Trips.query.filter_by(id=each_team.trip_id).first()
             trips.append({
                 'id': trip.id,
                 'route': trip.route,
@@ -86,7 +86,7 @@ class TripManager:
 
     def recount_user_budget(self, user_id, col):
         # team member id
-        user = Team.query.get(user_id)
+        user = Teams.query.get(user_id)
         credit = 0.0
         for row in range(0, self.size):
             if(row == col):
@@ -103,7 +103,7 @@ class TripManager:
         users_list = list(self.users_ids.keys())
 
         for row in range(0, self.size):
-            user = User.query.filter_by(id=users_list[row]).first()
+            user = Users.query.filter_by(id=users_list[row]).first()
             if(row == column):
                 continue
             credits_info[user.username] = round(self.expense_table[row, column], 2)
@@ -112,10 +112,10 @@ class TripManager:
     def collect_users(self):
         self.team.clear()
         # get team members of the trip
-        trip = Trip.query.get(self.id)
+        trip = Trips.query.get(self.id)
         team_members = trip.team_members
         for each_member in team_members:
-            user = User.query.filter_by(id=each_member.user_id).first()
+            user = Users.query.filter_by(id=each_member.user_id).first()
             self.recount_user_budget(each_member.id, self.users_ids.get(user.id))
             credit_info = self.get_credits_info(self.users_ids.get(user.id))
             self.team.append({
@@ -132,10 +132,10 @@ class TripManager:
 
     def collect_expenses(self):
         self.expenses.clear()
-        all_expenses = Trip.query.filter_by(id=self.id).first().expenses
+        all_expenses = Trips.query.filter_by(id=self.id).first().expenses
 
         for each_expense in all_expenses:
-            user = User.query.get(each_expense.user_id)
+            user = Users.query.get(each_expense.user_id)
 
             self.expenses.append({
                 'category': each_expense.category,
@@ -146,13 +146,13 @@ class TripManager:
 
     def add_joint_expense(self, username, category, sum, notes):
         # commit changes to the database
-        user = User.query.filter_by(username=username).first()
-        team_member = User.query.join(User.teams).filter(
-            User.username == username, Team.trip_id == self.id).first()
-        expense = Expense(trip_id=self.id, user_id=user.id, team_member_id=team_member.id,
+        user = Users.query.filter_by(username=username).first()
+        team_member = Users.query.join(Users.teams).filter(
+            Users.username == username, Teams.trip_id == self.id).first()
+        expense = Expenses(trip_id=self.id, user_id=user.id, team_member_id=team_member.id,
                           sum=sum, category=category, notes=notes)
         db.session.add(expense)
-        trip = Trip.query.get(self.id)
+        trip = Trips.query.get(self.id)
         trip.total_spendings = trip.total_spendings + expense.sum
         self.update_trip_date()
         db.session.commit()
@@ -169,13 +169,13 @@ class TripManager:
 
     def add_expense(self, username, category, sum, notes):
         # commit changes to the database
-        user = User.query.filter_by(username=username).first()
-        team_member = User.query.join(User.teams).filter(
-            User.username == username, Team.trip_id == self.id).first()
-        expense = Expense(trip_id=self.id, user_id=user.id, team_member_id=team_member.id,
+        user = Users.query.filter_by(username=username).first()
+        team_member = Users.query.join(Users.teams).filter(
+            Users.username == username, Teams.trip_id == self.id).first()
+        expense = Expenses(trip_id=self.id, user_id=user.id, team_member_id=team_member.id,
                           sum=sum, category=category, notes=notes)
         db.session.add(expense)
-        trip = Trip.query.get(self.id)
+        trip = Trips.query.get(self.id)
         trip.total_spendings = trip.total_spendings + expense.sum
         self.update_trip_date()
         db.session.commit()
@@ -195,10 +195,10 @@ class TripManager:
 
     def add_team_member(self, username, budget):
 
-        user = User.query.filter_by(username=username).first()
+        user = Users.query.filter_by(username=username).first()
         if user:
             # user is in a database
-            team_member = Team(trip_id=self.id, user_id=user.id,
+            team_member = Teams(trip_id=self.id, user_id=user.id,
                                budget=budget, balance=budget)
             db.session.add(team_member)
             self.update_trip_date()

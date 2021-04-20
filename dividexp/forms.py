@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, FloatField, TextAreaField, ValidationError, HiddenField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, NumberRange, Email
-from dividexp.models import User
+from dividexp.models import Users
 
 
 class LoginForm(FlaskForm):
@@ -23,12 +23,12 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign up')
 
     def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
+        user = Users.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError('That username is taken.')
 
     def validate_email(self, email):
-        email = User.query.filter_by(email=email.data).first()
+        email = Users.query.filter_by(email=email.data).first()
         if email:
             raise ValidationError('A user with such email is already registered. Please login.')
 

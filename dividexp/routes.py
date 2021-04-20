@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from dividexp import app, db, bcrypt, manage
 from dividexp.forms import CreateTripForm, LoginForm, RegistrationForm, CreateTeamMemberForm, AddNewExpenseForm
-from dividexp.models import User, Trip, Team
+from dividexp.models import Users, Trips, Teams
 from flask_login import login_user, logout_user, current_user, login_required
 
 
@@ -14,12 +14,12 @@ def home():
     form = CreateTripForm()
     if form.validate_on_submit():
         if current_user.is_authenticated:
-            new_trip = Trip(route=form.source.data +
+            new_trip = Trips(route=form.source.data +
                             ' - ' + form.destination.data)
             db.session.add(new_trip)
             db.session.commit()
             print(form.budget.data)
-            team_member = Team(trip_id=new_trip.id, user_id=current_user.id,
+            team_member = Teams(trip_id=new_trip.id, user_id=current_user.id,
                                budget=form.budget.data, balance=form.budget.data)
             db.session.add(team_member)
             db.session.commit()
@@ -35,7 +35,7 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(
             form.password.data).decode('utf-8')
-        user = User(name=form.name.data, username=form.username.data,
+        user = Users(name=form.name.data, username=form.username.data,
                     email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
@@ -47,7 +47,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Users.query.filter_by(username=form.username.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=True)
             next_page = request.args.get('next')
@@ -61,7 +61,7 @@ def login():
 @login_required
 def trip(trip_id):
 
-    trip = Trip.query.get_or_404(trip_id)
+    trip = Trips.query.get_or_404(trip_id)
 
     if (manage.id != trip.id):
         manage.clear()
@@ -75,8 +75,8 @@ def trip(trip_id):
 
     if team_member_form.validate_on_submit():
         # check whether the user is already in the team
-        existing = User.query.join(User.teams).filter(
-            User.username == team_member_form.username.data, Team.trip_id == trip.id).first()
+        existing = Users.query.join(Users.teams).filter(
+            Users.username == team_member_form.username.data, Teams.trip_id == trip.id).first()
         if(existing is None):
             if manage.add_team_member(team_member_form.username.data, team_member_form.budget.data) is False:
                 flash("""Couldn't find DivideXp account""")
